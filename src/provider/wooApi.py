@@ -30,8 +30,8 @@ class wooApi:
             timeout=20
         )
         
-        self.imageEditUrl = config.get_conf('wooApi', 'imageEditUrl')
-        self.imageUploadUrl = config.get_conf('wooApi', 'imageUploadUrl')
+        self.imageEditUrl = f"{config.get_conf('wooApi', 'url')}/wp-admin/post.php?post=&action=edit"
+        self.imageUploadUrl = f"{config.get_conf('wooApi', 'url')}/wp-json/wp/v2/media/"
         self.wp_username = config.get_conf('wooApi', 'username')
         self.wp_password = config.get_conf('wooApi', 'password')
 

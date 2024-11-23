@@ -2,3 +2,6 @@
 __pycache__
 images
 log
+*.db
+*.exe
+wp_images

@@ -160,37 +160,43 @@ class ImagesController:
     def _upload_images(self, list_images, cat_name):
         wooApi_ = wooApi()
         for i in list_images:
-            res = wooApi_.uploadWPImage(i)
-            if res == 1:
-                # Info immagine
-                img_basename = os.path.basename(i)
-                dt_file_ct = datetime.datetime.fromtimestamp(os.path.getctime(i))
-                filetype = (os.path.splitext(img_basename)[1][1:]).upper()             
-                try:
-                    db_record = lm.LocalMedia.filter(basename=img_basename, category=cat_name).get()
-                except lm.LocalMedia.DoesNotExist:
-                    db_record = None
+            try:
+                res = wooApi_.uploadWPImage(i)
+            except Exception as e:
+                typer.secho(
+                    f'Upload Immagine non riuscito: ' + os.path.basename(i),
+                    fg=typer.colors.RED,
+                )
+            # if res == 1:
+            # Info immagine
+            img_basename = os.path.basename(i)
+            dt_file_ct = datetime.datetime.fromtimestamp(os.path.getctime(i))
+            filetype = (os.path.splitext(img_basename)[1][1:]).upper()             
+            try:
+                db_record = lm.LocalMedia.filter(basename=img_basename, category=cat_name).get()
+            except lm.LocalMedia.DoesNotExist:
+                db_record = None
 
-                try:
-                    if db_record:
-                        # devo aggiornare
-                        lm.LocalMedia.update(
-                            basename=img_basename,
-                            filetype=filetype,
-                            category=cat_name,
-                            path=i,
-                            date_ct=dt_file_ct
-                        ).where(lm.LocalMedia.id==db_record.id).execute()
-                    else:
-                        lm.LocalMedia.get_or_create(
-                            basename=img_basename,
-                            filetype=filetype,
-                            category=cat_name,
-                            path=i,
-                            date_ct=dt_file_ct
-                        )
-                except Exception as e:
-                    typer.secho(
-                        f'Scrittura su DB non riuscita: ' + str(e),
-                        fg=typer.colors.RED,
+            try:
+                if db_record:
+                    # devo aggiornare
+                    lm.LocalMedia.update(
+                        basename=img_basename,
+                        filetype=filetype,
+                        category=cat_name,
+                        path=i,
+                        date_ct=dt_file_ct
+                    ).where(lm.LocalMedia.id==db_record.id).execute()
+                else:
+                    lm.LocalMedia.get_or_create(
+                        basename=img_basename,
+                        filetype=filetype,
+                        category=cat_name,
+                        path=i,
+                        date_ct=dt_file_ct
                     )
+            except Exception as e:
+                typer.secho(
+                    f'Scrittura su DB non riuscita: ' + str(e),
+                    fg=typer.colors.RED,
+                )

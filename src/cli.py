@@ -148,7 +148,7 @@ def processImages(
 ) -> None:
     ImagesController().processImages()
     
-    CSVLOGGER.write_csv_rows()
-    CSVLOGGER.moveFile()
     input("Press Enter to exit...")
+    # CSVLOGGER.write_csv_rows()
+    # CSVLOGGER.moveFile()
     raise typer.Exit()
